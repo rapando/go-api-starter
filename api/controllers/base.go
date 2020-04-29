@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 type Server struct {
@@ -22,8 +22,8 @@ func (s *Server) Log(a ...interface{}) {
 	utils.Log(a)
 }
 
-func (s *Server) Init() (err error) {
-	utils.InitLogger()
+func (s *Server) dbConnect() {
+	var err error
 
 	dbHost := os.Getenv("DB_HOST")
 	dbName := os.Getenv("DB_NAME")
@@ -33,16 +33,19 @@ func (s *Server) Init() (err error) {
 	dbURI := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", dbUsername, dbPassword, dbHost, dbName)
 	if s.Db, err = sql.Open("mysql", dbURI); err != nil {
 		s.Log("Unable to run query in db because ", err)
-		return err
+		os.Exit(3)
 	}
 
 	s.Db.SetMaxIdleConns(64)
 	s.Db.SetMaxOpenConns(100)
 	s.Db.SetConnMaxLifetime(10 * time.Second)
 	s.Log("Db connection successful")
+}
 
+func (s *Server) Init() {
+	utils.InitLogger()
+	s.dbConnect()
 	s.initRoutes()
-	return nil
 }
 
 func (s *Server) Run() {

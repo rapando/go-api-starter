@@ -2,3 +2,5 @@
 build
 logs
 .env
+.vscode
+.idea
