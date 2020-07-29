@@ -20,21 +20,13 @@ func InitLogger() {
 	)
 	if err != nil {
 		fmt.Println("Failed to initialize log file ", err.Error())
+		log.SetOutput(os.Stderr)
+		return
+	}
+	if os.Getenv("ENV") == "dev" {
+		log.SetOutput(os.Stderr)
+		return
 	}
 	log.SetOutput(writer)
 	return
-}
-
-func Log(msg ...interface{}) {
-	env := os.Getenv("ENV")
-	switch env {
-	case "dev":
-		fmt.Println(msg...)
-	case "test":
-		log.Println(msg...)
-	default:
-		msg = append(msg, "\n----------------------------")
-		log.Println(msg...)
-	}
-
 }
