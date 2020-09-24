@@ -9,7 +9,7 @@ import (
 var server = controllers.Server{}
 
 func Run() {
-	godotenv.Load()
+	_ = godotenv.Load()
 	server.Init()
 	server.Run()
 

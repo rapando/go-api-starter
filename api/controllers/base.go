@@ -3,15 +3,12 @@ package controllers
 import (
 	"api/api/utils"
 	"database/sql"
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"time"
-
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"log"
+	"net/http"
+	"os"
 )
 
 type Server struct {
@@ -19,29 +16,9 @@ type Server struct {
 	Router *mux.Router
 }
 
-func (s *Server) dbConnect() {
-	var err error
-
-	dbHost := os.Getenv("DB_HOST")
-	dbName := os.Getenv("DB_NAME")
-	dbUsername := os.Getenv("DB_USERNAME")
-	dbPassword := os.Getenv("DB_PASSWORD")
-
-	dbURI := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", dbUsername, dbPassword, dbHost, dbName)
-	if s.Db, err = sql.Open("mysql", dbURI); err != nil {
-		log.Println("Unable to run query in db because ", err)
-		os.Exit(3)
-	}
-
-	s.Db.SetMaxIdleConns(64)
-	s.Db.SetMaxOpenConns(100)
-	s.Db.SetConnMaxLifetime(10 * time.Second)
-	log.Println("Db connection successful")
-}
-
 func (s *Server) Init() {
 	utils.InitLogger()
-	s.dbConnect()
+	s.Db = utils.DbConnect()
 	s.initRoutes()
 }
 

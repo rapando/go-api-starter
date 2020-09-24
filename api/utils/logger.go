@@ -12,9 +12,9 @@ import (
 func InitLogger() {
 	logFolder := os.Getenv("LOG_FOLDER")
 	writer, err := rotatelogs.New(
-		fmt.Sprintf("%s%s.log", logFolder+"app-", "%Y-%m-%d.%H%M"),
+		fmt.Sprintf("%s%s.log", logFolder+"app-", "%Y-%m-%d"),
 		rotatelogs.WithLinkName(logFolder+"link.log"),
-		rotatelogs.WithRotationTime(time.Hour*12),
+		rotatelogs.WithRotationTime(time.Hour*24),
 		rotatelogs.WithMaxAge(-1),
 		rotatelogs.WithRotationCount(10000),
 	)
